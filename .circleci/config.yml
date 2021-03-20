@@ -23,4 +23,6 @@ workflows:
     # Run the run job in its own container
     jobs:
       - save_hello_world_output
-      - print_hello_world_output
+      - print_hello_world_output:
+          requires:
+            - save_hello_world_output
