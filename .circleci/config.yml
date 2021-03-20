@@ -24,6 +24,11 @@ jobs:
           at: ~/
       - run: cat ~/output.txt
       - print_pipeline_id
+      - run: return 1
+      - run:
+          - name: Erorr handling
+            command: echo "ERROR WORLD"
+            when: on_fail
 
 workflows:
   my_workflow:
