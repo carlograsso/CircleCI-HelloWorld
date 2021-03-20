@@ -4,20 +4,14 @@ version: 2.1
 jobs:
   print_hello:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:2020.01
     steps:
-      - run: echo Hello
-  print_world:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - run: echo World
+      - run: echo Hello $MY_NAME
+
 workflows:
   # Name the workflow "welcome"
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - print_hello
-      - print_world:
-          requires:
-            - print_hello
+      - print_hello:
+          - context: TestContext
