@@ -2,15 +2,26 @@
 version: 2.1
 # Orchestrate or schedule a set of jobs
 jobs:
-  print_hello:
+  save_hello_world_output:
     docker:
       - image: cimg/base:2020.01
     steps:
-      - run: echo Hello $MY_NAME
-
+      - run: echo "my output" > output.txt
+      - persist_to_workspace:
+        root: ~/
+        paths:
+          - output.txt
+  print_hello_world_output:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run: cat output.txt
 workflows:
   # Name the workflow "welcome"
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - print_hello
+      - save_hello_world_output
+      - print_hello_world_output
