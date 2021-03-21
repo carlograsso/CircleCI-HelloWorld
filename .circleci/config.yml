@@ -14,6 +14,7 @@ jobs:
             --stack-name my-stack \
             --template-file aws-template.yml
       - run:
+          name: check ec2 istance ip
           command: |
             echo [ec2] > inventory.txt \
             aws ec2 describe-istances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udacity" --output text >> inventory.txt
