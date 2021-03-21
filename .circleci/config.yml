@@ -15,8 +15,8 @@ jobs:
             --template-file aws-template.yml
       - run:
           command: |
-          echo [ec2] > inventory.txt \
-          aws ec2 describe-istances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udacity" --output text >> inventory.txt
+            echo [ec2] > inventory.txt \
+            aws ec2 describe-istances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udacity" --output text >> inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
