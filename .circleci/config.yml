@@ -3,10 +3,19 @@ version: 2.1
 
 jobs:
   create_infrastructure:
+    parameters:
+      aws_access-key-id:
+        default: AWS_ACCESS_KEY_ID
+      aws-secret-access-key:
+        default: AWS_SECRET_ACCESS_KEY
     docker:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run:
+          command: |
+            aws configure set aws_access_key_id \
+            aws configure set aws_secret_access_key
       - run:
           name: "Ensure Backend infrastructure exists"
           command: |
