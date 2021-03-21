@@ -18,7 +18,10 @@ jobs:
             --template-file aws-template.yml
       - run:
           command: |
-            echo [ec2] > ~/inventory.txt
+            echo "ansible_ssh_common_args='-o StrictHostKeyChecking=no'" > ~/inventory.txt
+      - run:
+          command: |
+            echo [ec2] >> ~/inventory.txt
       - run:
           name: check ec2 istance ip
           command: |
@@ -29,6 +32,7 @@ jobs:
       - run:
           command: |
             cat ~/inventory.txt
+
       - persist_to_workspace:
           root: ~/
           paths:
