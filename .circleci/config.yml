@@ -9,7 +9,7 @@ jobs:
       - checkout
       - run:
           name: "install required packages"
-          command: yum install -y tar
+          command: yum install -y tar gzip
       - run:
           name: "Ensure Backend infrastructure exists"
           command: |
