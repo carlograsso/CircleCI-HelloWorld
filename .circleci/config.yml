@@ -8,6 +8,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: "install required packages"
+          command: yum install -y tar
+      - run:
           name: "Ensure Backend infrastructure exists"
           command: |
             aws cloudformation deploy \
