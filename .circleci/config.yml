@@ -13,9 +13,36 @@ jobs:
             aws cloudformation deploy \
             --stack-name my-stack \
             --template-file aws-template.yml
+      - run:
+          command: |
+          echo [ec2] > inventory.txt \
+          aws ec2 describe-istances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udacity" --output text >> inventory.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - inventory.txt
 
+  configure_infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys: fingerprints:["44:cb:83:26:de:39:5c:97:bc:30:16:87:aa:3f:11:49"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: "Install dependencies"
+          command: |
+            apk add -- update ansible
+      - run:
+          name: "Configure server"
+          command: |
+            ansible-playbook -i ~/inventory.txt playbook.yml
 workflows:
   my_workflow:
     # Run the run job in its own container
     jobs:
       - create_infrastructure
+      - configure_infrastructure:
+          depends:
+            - create_infrastructure
