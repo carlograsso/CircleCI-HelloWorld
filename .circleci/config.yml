@@ -22,10 +22,14 @@ jobs:
       - run:
           name: check ec2 istance ip
           command: |
+            ec2ip='\
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:Project,Values=udacity" \
-            --output text >> ~/inventory.txt
+            --output text' 
+            $ec2ip >> ~/inventory.txt
+          environment:
+            EC2_URL: $ec2ip
       - run:
           command: |
             cat ~/inventory.txt
@@ -52,6 +56,23 @@ jobs:
           name: "Configure server"
           command: |
             ansible-playbook -i ~/inventory.txt playbook.yml
+
+  smoke_test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - run: apk add -update curl
+      - run:
+          name: "smoke test"
+          command: |
+            URL="http:/${EC2_URL}:3000/"
+            if curl -s --head ${URL}
+            then
+              return 0
+            else
+              return 1
+            fi
+
 workflows:
   my_workflow:
     # Run the run job in its own container
@@ -60,3 +81,6 @@ workflows:
       - configure_infrastructure:
           requires:
             - create_infrastructure
+      - smoke_test:
+          requires:
+            - configure_infrastructure
