@@ -8,7 +8,7 @@ Resources:
       KeyName: udacity
       ImageId: ami-05b622b5fa0269787
       Tags:
-        - key: Project
+        - Key: Project
           Value: udacity
   InstanceSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
