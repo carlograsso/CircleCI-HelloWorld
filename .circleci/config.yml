@@ -8,12 +8,12 @@ jobs:
     steps:
       - checkout
       - run:
-         name: "Ensure Backend infrastructure exists"
-         command: |
-         aws cloudformation deploy \
-         --stack-name my-stack \
-         --template-file aws-template.yml \
-         --region=us-west-2
+          name: "Ensure Backend infrastructure exists"
+          command: |
+            aws cloudformation deploy \
+            --stack-name my-stack \
+            --template-file aws-template.yml \
+            --region=us-west-2
 
 workflows:
   my_workflow:
