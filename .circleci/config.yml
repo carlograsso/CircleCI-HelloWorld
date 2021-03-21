@@ -1,40 +1,15 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-commands:
-  print_pipeline_id:
-    description: "A command to print the pipeline id"
-    steps:
-      - run: echo ${CIRCLE_WORKFLOW_ID}
-# Orchestrate or schedule a set of jobs
+
 jobs:
-  save_hello_world_output:
+  create_infrastructure:
     docker:
-      - image: cimg/base:2020.01
+      - image: amazon/aws-cli
     steps:
-      - run: echo "Hello World" > ~/output.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - output.txt
-  print_hello_world_output:
-    docker:
-      - image: cimg/base:2020.01
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run: cat ~/output.txt
-      - print_pipeline_id
-      - run: return 1
-      - run:
-          name: Erorr handling
-          command: echo "ERROR WORLD"
-          when: on_fail
+      - run: aws cloudformation create-stack --stack-name test --template-body file://../aws-template.yml --region=us-west-2
 
 workflows:
   my_workflow:
     # Run the run job in its own container
     jobs:
-      - save_hello_world_output
-      - print_hello_world_output:
-          requires:
-            - save_hello_world_output
+      - create_infrastructure
