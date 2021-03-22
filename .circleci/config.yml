@@ -22,14 +22,10 @@ jobs:
       - run:
           name: check ec2 istance ip
           command: |
-            ec2ip='\
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:Project,Values=udacity" \
-            --output text' 
-            $ec2ip >> ~/inventory.txt
-          environment:
-            EC2_URL: $ec2ip
+            --output text >> ~/inventory.txt
       - run:
           command: |
             cat ~/inventory.txt
@@ -65,7 +61,7 @@ jobs:
       - run:
           name: "smoke test"
           command: |
-            URL="http:/${EC2_URL}:3000/"
+            URL="https://blog.udacity.com/"
             if curl -s --head ${URL}
             then
               return 0
