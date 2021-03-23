@@ -26,7 +26,7 @@ jobs:
             --template-file aws-template.yml
       - run: return 1
       - destroy_environment
-        when: on_fail
+          when: on_fail
       - run:
           command: |
             echo [ec2] > ~/inventory.txt
