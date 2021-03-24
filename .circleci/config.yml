@@ -117,6 +117,7 @@ jobs:
     docker:
       - image: amazon/aws-cli:latest
     steps:
+      - checkout
       - run:
           name: promotion to production
           command: |
