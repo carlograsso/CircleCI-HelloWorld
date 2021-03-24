@@ -133,6 +133,9 @@ jobs:
     docker:
       - image: amazon/aws-cli:latest
     steps:
+      - run:
+          name: "install required packages"
+          command: yum install -y tar gzip
       - attach_workspace:
           at: ~/
       - run: OldPipelineId=$(cat ~/pipelineId.txt)
