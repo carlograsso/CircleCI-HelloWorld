@@ -28,9 +28,6 @@ jobs:
             aws cloudformation deploy \
             --stack-name prod-${CIRCLE_WORKFLOW_ID} \
             --template-file aws-template.yml
-      - run: return 1
-      - destroy_environment:
-          when_to_run: on_fail
 
       - run:
           command: |
@@ -85,14 +82,26 @@ jobs:
               return 1
             fi
 
+  create_and_deploy_front_end:
+    docker:
+      - image: amazon/aws-cli:latest
+    steps:
+      - run:
+          name: create s3 bucket
+          command: |
+            aws cloudformation deploy \
+            --template-file bucket.yml \
+            --stack-name "${CIRCLE_WORKFLOW_ID:0:7}" \ 
+            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID:0:7}"
 workflows:
   my_workflow:
     # Run the run job in its own container
     jobs:
-      - create_infrastructure
-      - configure_infrastructure:
-          requires:
-            - create_infrastructure
-      - smoke_test:
-          requires:
-            - configure_infrastructure
+      # - create_infrastructure
+      # - configure_infrastructure:
+      #     requires:
+      #       - create_infrastructure
+      # - smoke_test:
+      #     requires:
+      #       - configure_infrastructure
+      - create_and_deploy_front_end
