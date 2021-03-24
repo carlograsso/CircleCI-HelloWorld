@@ -141,9 +141,9 @@ jobs:
           at: ~/
       - run: echo 'export OldPipelineId=$(cat ~/pipelineId.txt)' >> $BASH_ENV
       - run: cat ~/pipelineId.txt
-      - run: echo $OldPipelineId}
+      - run: echo $OldPipelineId
       - run: aws s3 rm "s3://${OldPipelineId}" --recursive
-      - run: cloudformation delete-stack --stack-name "prod-${OldPipelineId}"
+      - run: aws cloudformation delete-stack --stack-name "prod-${OldPipelineId}"
 
 workflows:
   my_workflow:
