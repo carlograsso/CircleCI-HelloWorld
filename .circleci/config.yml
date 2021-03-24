@@ -104,6 +104,9 @@ jobs:
       - image: amazon/aws-cli:latest
     steps:
       - run:
+          name: "install required packages"
+          command: yum install -y tar gzip
+      - run:
           name: Wich pipeline done last successfull production
           command: |
             aws cloudformation \
@@ -147,13 +150,13 @@ workflows:
       # - smoke_test:
       #     requires:
       #       - configure_infrastructure
-      - create_and_deploy_front_end
-      - promote_to_production:
-          requires:
-            - create_and_deploy_front_end
-      - get_last_deployment_id:
-          requires:
-            - promote_to_production
+      # - create_and_deploy_front_end
+      # - promote_to_production:
+      #     requires:
+      #       - create_and_deploy_front_end
+      - get_last_deployment_id
+        # requires:
+        #   - promote_to_production
       - clean_up_old_front_end:
           requires:
             - promote_to_production
