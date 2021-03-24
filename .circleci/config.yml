@@ -139,14 +139,11 @@ jobs:
           command: yum install -y tar gzip
       - attach_workspace:
           at: ~/
-      - run:
-        name: asd
-        command: |
-          OldPipelineId=$(cat ~/pipelineId.txt)
-          cat ~/pipelineId.txt
-          echo ${OldPipelineId}
-          aws s3 rm "s3://${OldPipelineId}" --recursive
-          cloudformation delete-stack --stack-name "prod-${OldPipelineId}"
+      - run: echo 'export OldPipelineId=$(cat ~/pipelineId.txt)' >> $BASH_ENV
+      - run: cat ~/pipelineId.txt
+      - run: echo $OldPipelineId}
+      - run: aws s3 rm "s3://${OldPipelineId}" --recursive
+      - run: cloudformation delete-stack --stack-name "prod-${OldPipelineId}"
 
 workflows:
   my_workflow:
