@@ -91,8 +91,38 @@ jobs:
           command: |
             aws cloudformation deploy \
             --template-file bucket.yml \
-            --stack-name ${CIRCLE_WORKFLOW_ID:0:7} \ 
-            --parameter-overrides PipelineID=${CIRCLE_WORKFLOW_ID:0:7}
+            --stack-name "${CIRCLE_WORKFLOW_ID}" \ 
+            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
+      - run:
+          name: copy index.html to bucket
+          command: |
+            aws s3 cp index.html s3://"${CIRCLE_WORKFLOW_ID}"/ --delete
+
+  get_last_deployment_id:
+    docker:
+      - image: amazon/aws-cli:latest
+    steps:
+      - run:
+          name: Wich pipeline done last successfull production
+          command: |
+            aws cloudformation \
+            list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
+            --no-paginate --output text > pipelineId.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - pipelineId.txt
+  promote_to_production:
+    docker:
+      - image: amazon/aws-cli:latest
+    steps:
+      - run:
+          name: promotion to production
+          command: |
+            aws cloudformation deploy \
+            --template-file cloudfront.yml \
+            --stack-name production-distro \
+            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
 workflows:
   my_workflow:
     # Run the run job in its own container
@@ -105,3 +135,6 @@ workflows:
       #     requires:
       #       - configure_infrastructure
       - create_and_deploy_front_end
+      - promote_to_production
+          requires: 
+            - create_and_deploy_front_end
