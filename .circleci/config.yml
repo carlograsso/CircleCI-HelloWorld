@@ -139,8 +139,9 @@ jobs:
       - attach_workspace:
           at: ~/
       - run: OldPipelineId=$(cat ~/pipelineId.txt)
+      - run: echo ${OldPipelineId}
       - run: aws s3 rm "s3://${OldPipelineID}" --recursive
-      - run: cloudformation delete-stack --stack-name "${PreviousPipelineID}"
+      - run: cloudformation delete-stack --stack-name "prod-${OldPipelineID}"
 
 workflows:
   my_workflow:
