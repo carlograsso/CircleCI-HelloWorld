@@ -91,12 +91,12 @@ jobs:
           command: |
             aws cloudformation deploy \
             --template-file bucket.yml \
-            --stack-name "${CIRCLE_WORKFLOW_ID}" \ 
-            --parameter-overrides NAME="${CIRCLE_WORKFLOW_ID}"
+            --stack-name ${CIRCLE_WORKFLOW_ID} \
+            --parameter-overrides NAME=${CIRCLE_WORKFLOW_ID}
       - run:
           name: copy index.html to bucket
           command: |
-            aws s3 cp index.html s3://"${CIRCLE_WORKFLOW_ID}"/ --delete
+            aws s3 cp index.html s3://${CIRCLE_WORKFLOW_ID}/
 
   get_last_deployment_id:
     docker:
