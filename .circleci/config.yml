@@ -125,6 +125,17 @@ jobs:
             --template-file cloudfront.yml \
             --stack-name production-distro \
             --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID:0:7}"
+
+  clean_up_old_front_end:
+    docker:
+      - image: amazon/aws-cli:latest
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run: OldPipelineId=$(cat ~/pipelineId.txt)
+      - run: aws s3 rm "s3://${OldPipelineID}" --recursive
+      - run: cloudformation delete-stack --stack-name "${PreviousPipelineID}"
+
 workflows:
   my_workflow:
     # Run the run job in its own container
@@ -140,3 +151,6 @@ workflows:
       - promote_to_production:
           requires:
             - create_and_deploy_front_end
+      - clean_up_old_front_end:
+          requires:
+            - promote_to_production:
