@@ -153,4 +153,4 @@ workflows:
             - create_and_deploy_front_end
       - clean_up_old_front_end:
           requires:
-            - promote_to_production:
+            - promote_to_production
